@@ -44,14 +44,15 @@ class Settings(BaseSettings):
         description="HTTP request timeout in seconds.",
     )
     qw_default_max_hits: int = Field(
-        20,
+        100,
         gt=0,
         description="Default number of hits when a search omits max_hits.",
     )
     qw_max_hits_ceiling: int = Field(
-        100,
+        500,
         gt=0,
-        description="Hard upper bound on the hits any search may return.",
+        description="Hard upper bound on the hits any single search may return; "
+        "page beyond it with start_offset.",
     )
     mcp_transport: Transport = Field(
         Transport.STDIO,
