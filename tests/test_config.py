@@ -27,8 +27,8 @@ def test_defaults(monkeypatch):
     s = _settings(monkeypatch, QW_BASE_URL="http://localhost:7280")
     assert s.qw_base_url == "http://localhost:7280"
     assert s.qw_timeout == 30.0
-    assert s.qw_default_max_hits == 20
-    assert s.qw_max_hits_ceiling == 100
+    assert s.qw_default_max_hits == 100
+    assert s.qw_max_hits_ceiling == 500
     assert s.mcp_transport is Transport.STDIO
 
 
@@ -61,8 +61,8 @@ def test_default_hits_cannot_exceed_ceiling(monkeypatch):
         _settings(
             monkeypatch,
             QW_BASE_URL="http://example:7280",
-            QW_DEFAULT_MAX_HITS="200",
-            QW_MAX_HITS_CEILING="100",
+            QW_DEFAULT_MAX_HITS="600",
+            QW_MAX_HITS_CEILING="500",
         )
 
 
