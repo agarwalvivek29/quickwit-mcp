@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Quickwit documentation
+    url: https://quickwit.io/docs
+    about: Reference for the Quickwit REST API and query language.
+  - name: Model Context Protocol
+    url: https://modelcontextprotocol.io
+    about: Spec and SDKs for MCP servers and clients.

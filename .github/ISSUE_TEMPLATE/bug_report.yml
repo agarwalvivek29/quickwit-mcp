@@ -1,0 +1,42 @@
+name: Bug report
+description: Report a problem with quickwit-mcp
+labels: ["type:bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to file a bug. Please fill out the sections below.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the bug, including the tool call or request that triggered it.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Configure QW_BASE_URL=...
+        2. Call tool `search_logs` with ...
+        3. See error
+    validations:
+      required: true
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      description: quickwit-mcp version, Python version, Quickwit version, transport (stdio/streamable-http), OS.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / output
+      render: shell
