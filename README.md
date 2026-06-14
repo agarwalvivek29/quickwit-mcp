@@ -67,6 +67,13 @@ docker run -p 8000:8000 -e QW_BASE_URL=http://<quickwit-host>:7280 \
 Images are published to `ghcr.io/agarwalvivek29/quickwit-mcp` (multi-arch: amd64/arm64),
 tagged `latest` and by version (`0.0.1`, `0.0`).
 
+## Health endpoints
+
+- `GET /health` — **liveness**: 200 if the process is up (no Quickwit call). Use for k8s `livenessProbe` / Docker healthcheck.
+- `GET /ready` — **readiness**: 200 if Quickwit is reachable, 503 otherwise. Use for k8s `readinessProbe`.
+
+Keeping liveness independent of Quickwit means a Quickwit outage stops traffic (readiness) without restarting pods (liveness).
+
 ## Configuration
 
 All via environment variables (see `.env.example`):
