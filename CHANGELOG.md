@@ -7,9 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.4] — 2026-06-14
+
 ### Added
 - `MCP_STATELESS` setting (and Helm `stateless` value, default true) — runs streamable-http without per-session state so any replica can serve any request. Required for horizontal scaling behind a round-robin Service; stateful mode (default for the binary) needs a single instance or sticky sessions.
 - Helm chart (`charts/quickwit-mcp`): Deployment (both probes → `/health`, non-root + read-only-rootfs securityContext, resources), Service, ServiceAccount, optional Ingress and HPA (autoscaling/v2), and a PodDisruptionBudget. Published to GHCR as an OCI artifact (`oci://ghcr.io/agarwalvivek29/charts/quickwit-mcp`) on release; linted/rendered in CI.
+
+### Fixed
+- The shared Quickwit client was closed by a FastMCP lifespan, which in stateless_http mode runs per request — closing the client after the first request. It now lives for the process lifetime.
 
 ## [0.0.3] — 2026-06-14
 
@@ -37,7 +42,8 @@ Initial read-only release.
 - Local dev harness `scripts/dev-quickwit.sh`.
 - Documentation: README, CONTRIBUTING, ROADMAP, security & conduct policies.
 
-[Unreleased]: https://github.com/agarwalvivek29/quickwit-mcp/compare/v0.0.3...HEAD
+[Unreleased]: https://github.com/agarwalvivek29/quickwit-mcp/compare/v0.0.4...HEAD
+[0.0.4]: https://github.com/agarwalvivek29/quickwit-mcp/compare/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/agarwalvivek29/quickwit-mcp/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/agarwalvivek29/quickwit-mcp/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/agarwalvivek29/quickwit-mcp/releases/tag/v0.0.1
