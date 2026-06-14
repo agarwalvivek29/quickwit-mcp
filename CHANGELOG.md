@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Split health probes for Kubernetes: `GET /health` is now **liveness** (200 if the process is up, no Quickwit call) and `GET /ready` is **readiness** (200 if Quickwit reachable, 503 otherwise). The Docker `HEALTHCHECK` uses `/health`. This prevents a Quickwit outage from restarting pods.
+
 ## [0.0.2] — 2026-06-14
 
 ### Added

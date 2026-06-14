@@ -113,12 +113,19 @@ def build_server(settings: Settings | None = None) -> FastMCP:
 
     @mcp.custom_route("/health", methods=["GET"])
     async def health(_request: Request) -> JSONResponse:
-        """Readiness probe: 200 if Quickwit is reachable, 503 otherwise."""
+        """Liveness probe: 200 if the process is up. Does NOT call Quickwit, so a
+        Quickwit outage never restarts the pod."""
+        return JSONResponse({"status": "ok"})
+
+    @mcp.custom_route("/ready", methods=["GET"])
+    async def ready(_request: Request) -> JSONResponse:
+        """Readiness probe: 200 if Quickwit is reachable, 503 otherwise. A failing
+        readiness removes the pod from the Service without restarting it."""
         try:
             version = await client.ping()
         except Exception as exc:  # any failure (down, timeout, 5xx) means not ready
             return JSONResponse({"status": "unavailable", "error": str(exc)}, status_code=503)
         build = version.get("build", {}) if isinstance(version, dict) else {}
-        return JSONResponse({"status": "ok", "quickwit_version": build.get("version")})
+        return JSONResponse({"status": "ready", "quickwit_version": build.get("version")})
 
     return mcp
