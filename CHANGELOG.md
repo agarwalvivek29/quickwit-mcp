@@ -7,11 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.3] — 2026-06-14
+
 ### Added
-- `GET /health` — liveness + readiness probe (200 if process up; no Quickwit call). Point both k8s probes here; a shared-dependency-coupled probe would pull every replica from the Service at once when Quickwit blips.
 - `GET /status` — diagnostic (always 200) reporting Quickwit reachability for monitoring.
 
-The Docker `HEALTHCHECK` uses `/health`.
+### Changed
+- `GET /health` is now liveness **and** readiness (200 if the process is up; **no Quickwit call**). Point both k8s probes here. This replaces the 0.0.2 behavior where `/health` checked Quickwit — coupling a probe to a shared dependency would pull every replica from the Service at once when Quickwit blips (cascading failure). The Docker `HEALTHCHECK` uses `/health`.
 
 ## [0.0.2] — 2026-06-14
 
@@ -31,6 +33,7 @@ Initial read-only release.
 - Local dev harness `scripts/dev-quickwit.sh`.
 - Documentation: README, CONTRIBUTING, ROADMAP, security & conduct policies.
 
-[Unreleased]: https://github.com/agarwalvivek29/quickwit-mcp/compare/v0.0.2...HEAD
+[Unreleased]: https://github.com/agarwalvivek29/quickwit-mcp/compare/v0.0.3...HEAD
+[0.0.3]: https://github.com/agarwalvivek29/quickwit-mcp/compare/v0.0.2...v0.0.3
 [0.0.2]: https://github.com/agarwalvivek29/quickwit-mcp/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/agarwalvivek29/quickwit-mcp/releases/tag/v0.0.1
