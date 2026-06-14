@@ -69,10 +69,10 @@ tagged `latest` and by version (`0.0.1`, `0.0`).
 
 ## Health endpoints
 
-- `GET /health` — **liveness**: 200 if the process is up (no Quickwit call). Use for k8s `livenessProbe` / Docker healthcheck.
-- `GET /ready` — **readiness**: 200 if Quickwit is reachable, 503 otherwise. Use for k8s `readinessProbe`.
+- `GET /health` — **liveness + readiness** probe: 200 if the process is up. Point both the k8s `livenessProbe` and `readinessProbe` here. Never calls Quickwit.
+- `GET /status` — **diagnostic** (always 200, *not* a probe): reports Quickwit reachability for monitoring/alerts.
 
-Keeping liveness independent of Quickwit means a Quickwit outage stops traffic (readiness) without restarting pods (liveness).
+The probe deliberately does not check Quickwit. Every replica shares the same Quickwit, so a dependency-coupled probe would pull **all** pods from the Service at once when Quickwit blips — a cascading failure that turns a downstream hiccup into a total outage. When Quickwit is down the pods stay in the Service and return their own errors; alert on `/status` instead.
 
 ## Configuration
 

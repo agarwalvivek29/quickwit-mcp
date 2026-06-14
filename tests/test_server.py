@@ -17,8 +17,8 @@ async def _get(path: str) -> httpx.Response:
 
 
 @respx.mock
-async def test_health_is_liveness_only():
-    # /health must NOT depend on Quickwit — 200 even when Quickwit is unreachable.
+async def test_health_does_not_depend_on_quickwit():
+    # /health (liveness + readiness) must NOT depend on Quickwit — 200 even when down.
     respx.get("http://qw.test/api/v1/version").mock(side_effect=httpx.ConnectError("refused"))
     resp = await _get("/health")
     assert resp.status_code == 200
@@ -26,23 +26,24 @@ async def test_health_is_liveness_only():
 
 
 @respx.mock
-async def test_ready_ok_when_quickwit_reachable():
+async def test_status_reports_quickwit_reachable():
     respx.get("http://qw.test/api/v1/version").mock(
         return_value=httpx.Response(200, json={"build": {"version": "v0.8.2"}})
     )
-    resp = await _get("/ready")
+    resp = await _get("/status")
     assert resp.status_code == 200
     body = resp.json()
-    assert body["status"] == "ready"
+    assert body["quickwit"] == "reachable"
     assert body["quickwit_version"] == "v0.8.2"
 
 
 @respx.mock
-async def test_ready_503_when_quickwit_down():
+async def test_status_reports_quickwit_unreachable_but_still_200():
+    # Diagnostic, not a probe: always 200 so it can't accidentally gate routing.
     respx.get("http://qw.test/api/v1/version").mock(side_effect=httpx.ConnectError("refused"))
-    resp = await _get("/ready")
-    assert resp.status_code == 503
-    assert resp.json()["status"] == "unavailable"
+    resp = await _get("/status")
+    assert resp.status_code == 200
+    assert resp.json()["quickwit"] == "unreachable"
 
 
 async def test_host_port_from_settings():
