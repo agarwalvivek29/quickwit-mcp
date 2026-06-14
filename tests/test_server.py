@@ -54,6 +54,15 @@ async def test_host_port_from_settings():
     assert mcp.settings.port == 9001
 
 
+async def test_stateless_flag_propagates():
+    stateful = build_server(SETTINGS)
+    assert stateful.settings.stateless_http is False
+    stateless = build_server(
+        Settings(qw_base_url="http://qw.test", mcp_stateless=True, _env_file=None)
+    )
+    assert stateless.settings.stateless_http is True
+
+
 async def test_all_tools_registered():
     mcp = build_server(SETTINGS)
     tools = await mcp.list_tools()

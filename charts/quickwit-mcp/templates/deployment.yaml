@@ -47,6 +47,8 @@ spec:
               value: "0.0.0.0"
             - name: MCP_PORT
               value: "8000"
+            - name: MCP_STATELESS
+              value: {{ .Values.stateless | quote }}
             - name: QW_BASE_URL
               value: {{ required "quickwit.baseUrl is required" .Values.quickwit.baseUrl | quote }}
             {{- with .Values.quickwit.timeout }}
