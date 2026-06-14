@@ -77,6 +77,14 @@ class QuickwitClient:
 
     # -- endpoints ---------------------------------------------------------
 
+    async def ping(self, *, timeout: float = 3.0) -> Any:
+        """``GET /api/v1/version`` with a short timeout — a cheap reachability check.
+
+        Used by the health endpoint; raises on any failure (non-2xx via
+        :class:`QuickwitError`, connection/timeout via the underlying httpx error).
+        """
+        return self._handle(await self._client.get("/api/v1/version", timeout=timeout))
+
     async def list_indexes(self) -> Any:
         """``GET /api/v1/indexes`` — metadata for every index."""
         return self._handle(await self._client.get("/api/v1/indexes"))
