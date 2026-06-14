@@ -32,6 +32,7 @@ def test_defaults(monkeypatch):
     assert s.mcp_transport is Transport.STDIO
     assert s.mcp_host == "127.0.0.1"
     assert s.mcp_port == 8000
+    assert s.mcp_stateless is False
 
 
 def test_missing_base_url_raises(monkeypatch):

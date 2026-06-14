@@ -101,6 +101,16 @@ All via environment variables (see `.env.example`):
 | `MCP_TRANSPORT` | `stdio` | `stdio` or `streamable-http` |
 | `MCP_HOST` | `127.0.0.1` | Bind address for streamable-http (use `0.0.0.0` in containers) |
 | `MCP_PORT` | `8000` | Port for streamable-http |
+| `MCP_STATELESS` | `false` | `true` = no per-session state, so any replica serves any request (horizontal scaling). `false` keeps sessions in-process (single instance / sticky sessions). |
+
+### Scaling: stateless vs stateful
+
+Stateful streamable-http keeps each session (`Mcp-Session-Id`) in the serving process. Behind a
+round-robin load balancer with multiple replicas, follow-up requests can land on a replica that
+doesn't have the session — so **stateful needs one instance or sticky sessions**. Set
+`MCP_STATELESS=true` to make every request independent; then any replica can serve any request.
+Our tools are pure request/response, so stateless mode loses nothing. The Helm chart defaults to
+stateless (`stateless: true`) since it ships multiple replicas + HPA.
 
 ## Development
 

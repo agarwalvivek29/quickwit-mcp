@@ -12,6 +12,11 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+# Stateless streamable-http (recommended for multi-replica). When true, any pod
+# can serve any request, so the round-robin Service works without sticky sessions.
+# Set false ONLY with replicaCount=1 (or with session affinity configured).
+stateless: true
+
 # --- application config (maps to env vars) ---
 quickwit:
   # REQUIRED: base URL of the Quickwit instance, e.g. http://quickwit:7280

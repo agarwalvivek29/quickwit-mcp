@@ -67,6 +67,15 @@ class Settings(BaseSettings):
         gt=0,
         description="Port for streamable-http.",
     )
+    mcp_stateless: bool = Field(
+        False,
+        description=(
+            "Run streamable-http without per-session state so any replica can serve "
+            "any request (set true behind a round-robin load balancer / for horizontal "
+            "scaling). Stateful (default) keeps sessions in-process and needs a single "
+            "instance or sticky sessions."
+        ),
+    )
 
     @field_validator("qw_base_url")
     @classmethod

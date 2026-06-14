@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `MCP_STATELESS` setting (and Helm `stateless` value, default true) — runs streamable-http without per-session state so any replica can serve any request. Required for horizontal scaling behind a round-robin Service; stateful mode (default for the binary) needs a single instance or sticky sessions.
 - Helm chart (`charts/quickwit-mcp`): Deployment (both probes → `/health`, non-root + read-only-rootfs securityContext, resources), Service, ServiceAccount, optional Ingress and HPA (autoscaling/v2), and a PodDisruptionBudget. Published to GHCR as an OCI artifact (`oci://ghcr.io/agarwalvivek29/charts/quickwit-mcp`) on release; linted/rendered in CI.
 
 ## [0.0.3] — 2026-06-14

@@ -1,14 +1,16 @@
 """FastMCP server assembly.
 
-Builds the MCP server, registers the read-only tools over a single shared
-:class:`~quickwit_mcp.client.QuickwitClient`, and closes that client on shutdown
-via the server lifespan.
+Builds the MCP server and registers the read-only tools over a single shared
+:class:`~quickwit_mcp.client.QuickwitClient` that lives for the process lifetime.
+
+The client is intentionally NOT closed via a FastMCP lifespan: in stateless_http
+mode the lifespan runs per request, so closing the shared client there would shut
+it after the first request. The process owns the client; the OS reclaims its
+sockets on exit.
 """
 
 from __future__ import annotations
 
-from collections.abc import AsyncIterator
-from contextlib import asynccontextmanager
 from typing import Any
 
 from mcp.server.fastmcp import FastMCP
@@ -29,27 +31,16 @@ _INSTRUCTIONS = (
 
 
 def build_server(settings: Settings | None = None) -> FastMCP:
-    """Construct the FastMCP server with all tools registered.
-
-    A single :class:`QuickwitClient` is shared across tools and closed when the
-    server shuts down.
-    """
+    """Construct the FastMCP server with all tools registered over a shared client."""
     settings = settings or get_settings()
     client = QuickwitClient(settings)
-
-    @asynccontextmanager
-    async def lifespan(_server: FastMCP) -> AsyncIterator[None]:
-        try:
-            yield
-        finally:
-            await client.aclose()
 
     mcp = FastMCP(
         "quickwit-mcp",
         instructions=_INSTRUCTIONS,
-        lifespan=lifespan,
         host=settings.mcp_host,
         port=settings.mcp_port,
+        stateless_http=settings.mcp_stateless,
     )
 
     @mcp.tool()
