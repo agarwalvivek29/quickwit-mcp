@@ -113,19 +113,24 @@ def build_server(settings: Settings | None = None) -> FastMCP:
 
     @mcp.custom_route("/health", methods=["GET"])
     async def health(_request: Request) -> JSONResponse:
-        """Liveness probe: 200 if the process is up. Does NOT call Quickwit, so a
-        Quickwit outage never restarts the pod."""
+        """Liveness + readiness probe: 200 if the process is up. Never calls
+        Quickwit — every replica shares the same Quickwit, so coupling a probe to
+        it would pull all pods from the Service at once (cascading failure) when it
+        blips, instead of letting the app return its own error. Point both the k8s
+        livenessProbe and readinessProbe here; use /status to observe Quickwit."""
         return JSONResponse({"status": "ok"})
 
-    @mcp.custom_route("/ready", methods=["GET"])
-    async def ready(_request: Request) -> JSONResponse:
-        """Readiness probe: 200 if Quickwit is reachable, 503 otherwise. A failing
-        readiness removes the pod from the Service without restarting it."""
+    @mcp.custom_route("/status", methods=["GET"])
+    async def status(_request: Request) -> JSONResponse:
+        """Diagnostic (always 200): reports Quickwit reachability for monitoring.
+        Not a probe — must never gate k8s routing."""
         try:
             version = await client.ping()
-        except Exception as exc:  # any failure (down, timeout, 5xx) means not ready
-            return JSONResponse({"status": "unavailable", "error": str(exc)}, status_code=503)
+        except Exception as exc:
+            return JSONResponse({"process": "ok", "quickwit": "unreachable", "error": str(exc)})
         build = version.get("build", {}) if isinstance(version, dict) else {}
-        return JSONResponse({"status": "ready", "quickwit_version": build.get("version")})
+        return JSONResponse(
+            {"process": "ok", "quickwit": "reachable", "quickwit_version": build.get("version")}
+        )
 
     return mcp
