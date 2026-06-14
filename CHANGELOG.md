@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Helm chart (`charts/quickwit-mcp`): Deployment (both probes → `/health`, non-root + read-only-rootfs securityContext, resources), Service, ServiceAccount, optional Ingress and HPA (autoscaling/v2), and a PodDisruptionBudget. Published to GHCR as an OCI artifact (`oci://ghcr.io/agarwalvivek29/charts/quickwit-mcp`) on release; linted/rendered in CI.
+
 ## [0.0.3] — 2026-06-14
 
 ### Added

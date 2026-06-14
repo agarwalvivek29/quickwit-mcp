@@ -1,0 +1,20 @@
+quickwit-mcp is deployed.
+
+Service: {{ include "quickwit-mcp.fullname" . }}:{{ .Values.service.port }} (MCP endpoint at /mcp)
+Image:   {{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}
+Quickwit: {{ .Values.quickwit.baseUrl }}
+
+{{- if .Values.ingress.enabled }}
+
+Reachable via Ingress:
+{{- range .Values.ingress.hosts }}
+  http{{ if $.Values.ingress.tls }}s{{ end }}://{{ .host }}{{ (first .paths).path }}mcp
+{{- end }}
+{{- else }}
+
+Port-forward to try it locally:
+  kubectl port-forward svc/{{ include "quickwit-mcp.fullname" . }} {{ .Values.service.port }}:{{ .Values.service.port }}
+  # MCP endpoint:        http://localhost:{{ .Values.service.port }}/mcp
+  # Liveness/readiness:  http://localhost:{{ .Values.service.port }}/health
+  # Quickwit diagnostic: http://localhost:{{ .Values.service.port }}/status
+{{- end }}

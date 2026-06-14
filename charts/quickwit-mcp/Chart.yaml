@@ -1,0 +1,19 @@
+apiVersion: v2
+name: quickwit-mcp
+description: Read-only MCP server exposing Quickwit log search & aggregations to LLM clients
+type: application
+# Chart version — bumped on chart changes, independent of the app.
+version: 0.1.0
+# Default application (image) version this chart deploys.
+appVersion: "0.0.3"
+home: https://github.com/agarwalvivek29/quickwit-mcp
+sources:
+  - https://github.com/agarwalvivek29/quickwit-mcp
+keywords:
+  - mcp
+  - quickwit
+  - logs
+  - observability
+maintainers:
+  - name: agarwalvivek29
+    url: https://github.com/agarwalvivek29

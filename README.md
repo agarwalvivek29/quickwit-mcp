@@ -67,6 +67,20 @@ docker run -p 8000:8000 -e QW_BASE_URL=http://<quickwit-host>:7280 \
 Images are published to `ghcr.io/agarwalvivek29/quickwit-mcp` (multi-arch: amd64/arm64),
 tagged `latest` and by version (`0.0.1`, `0.0`).
 
+### Kubernetes (Helm)
+
+The chart is published to GHCR as an OCI artifact:
+
+```bash
+helm install quickwit-mcp oci://ghcr.io/agarwalvivek29/charts/quickwit-mcp \
+  --set quickwit.baseUrl=http://quickwit:7280
+```
+
+`quickwit.baseUrl` is required. The chart includes a Deployment (both probes →
+`/health`), Service, ServiceAccount, optional Ingress and HPA, and a
+PodDisruptionBudget. See [`charts/quickwit-mcp/values.yaml`](./charts/quickwit-mcp/values.yaml)
+for all options.
+
 ## Health endpoints
 
 - `GET /health` — **liveness + readiness** probe: 200 if the process is up. Point both the k8s `livenessProbe` and `readinessProbe` here. Never calls Quickwit.
