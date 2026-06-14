@@ -58,6 +58,15 @@ class Settings(BaseSettings):
         Transport.STDIO,
         description="Transport the MCP server runs on.",
     )
+    mcp_host: str = Field(
+        "127.0.0.1",
+        description="Bind address for streamable-http (set 0.0.0.0 in containers).",
+    )
+    mcp_port: int = Field(
+        8000,
+        gt=0,
+        description="Port for streamable-http.",
+    )
 
     @field_validator("qw_base_url")
     @classmethod

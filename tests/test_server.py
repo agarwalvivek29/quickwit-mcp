@@ -6,6 +6,14 @@ from quickwit_mcp.server import build_server
 SETTINGS = Settings(qw_base_url="http://qw.test", _env_file=None)
 
 
+async def test_host_port_from_settings():
+    mcp = build_server(
+        Settings(qw_base_url="http://qw.test", mcp_host="0.0.0.0", mcp_port=9001, _env_file=None)
+    )
+    assert mcp.settings.host == "0.0.0.0"
+    assert mcp.settings.port == 9001
+
+
 async def test_all_tools_registered():
     mcp = build_server(SETTINGS)
     tools = await mcp.list_tools()

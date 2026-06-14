@@ -42,7 +42,13 @@ def build_server(settings: Settings | None = None) -> FastMCP:
         finally:
             await client.aclose()
 
-    mcp = FastMCP("quickwit-mcp", instructions=_INSTRUCTIONS, lifespan=lifespan)
+    mcp = FastMCP(
+        "quickwit-mcp",
+        instructions=_INSTRUCTIONS,
+        lifespan=lifespan,
+        host=settings.mcp_host,
+        port=settings.mcp_port,
+    )
 
     @mcp.tool()
     async def list_indexes(with_stats: bool = False) -> list[dict[str, Any]]:
