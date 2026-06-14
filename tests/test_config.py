@@ -30,6 +30,8 @@ def test_defaults(monkeypatch):
     assert s.qw_default_max_hits == 100
     assert s.qw_max_hits_ceiling == 500
     assert s.mcp_transport is Transport.STDIO
+    assert s.mcp_host == "127.0.0.1"
+    assert s.mcp_port == 8000
 
 
 def test_missing_base_url_raises(monkeypatch):
