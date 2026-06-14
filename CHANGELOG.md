@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `GET /health` readiness endpoint — returns 200 when Quickwit is reachable, 503 otherwise. The Docker `HEALTHCHECK` now uses it instead of a TCP-only check.
+
 ## [0.0.1] — 2026-06-14
 
 Initial read-only release.

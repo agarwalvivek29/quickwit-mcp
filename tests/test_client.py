@@ -28,6 +28,24 @@ async def test_list_indexes():
 
 
 @respx.mock
+async def test_ping_returns_version():
+    respx.get(f"{BASE}/api/v1/version").mock(
+        return_value=httpx.Response(200, json={"build": {"version": "v0.8.2"}})
+    )
+    async with make_client() as c:
+        out = await c.ping()
+    assert out["build"]["version"] == "v0.8.2"
+
+
+@respx.mock
+async def test_ping_raises_on_error():
+    respx.get(f"{BASE}/api/v1/version").mock(return_value=httpx.Response(503, text="down"))
+    async with make_client() as c:
+        with pytest.raises(QuickwitError):
+            await c.ping()
+
+
+@respx.mock
 async def test_get_index_metadata():
     respx.get(f"{BASE}/api/v1/indexes/logs").mock(
         return_value=httpx.Response(

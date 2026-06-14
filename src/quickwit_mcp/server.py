@@ -12,6 +12,8 @@ from contextlib import asynccontextmanager
 from typing import Any
 
 from mcp.server.fastmcp import FastMCP
+from starlette.requests import Request
+from starlette.responses import JSONResponse
 
 from .client import QuickwitClient
 from .config import Settings, get_settings
@@ -108,5 +110,15 @@ def build_server(settings: Settings | None = None) -> FastMCP:
     def get_query_syntax_help() -> str:
         """Quickwit query-language + aggregation cheat sheet (no network call)."""
         return syntax_help.get_query_syntax_help()
+
+    @mcp.custom_route("/health", methods=["GET"])
+    async def health(_request: Request) -> JSONResponse:
+        """Readiness probe: 200 if Quickwit is reachable, 503 otherwise."""
+        try:
+            version = await client.ping()
+        except Exception as exc:  # any failure (down, timeout, 5xx) means not ready
+            return JSONResponse({"status": "unavailable", "error": str(exc)}, status_code=503)
+        build = version.get("build", {}) if isinstance(version, dict) else {}
+        return JSONResponse({"status": "ok", "quickwit_version": build.get("version")})
 
     return mcp

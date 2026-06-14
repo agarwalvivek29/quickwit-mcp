@@ -22,8 +22,8 @@ ENV MCP_TRANSPORT=streamable-http \
     MCP_PORT=8000
 EXPOSE 8000
 
-# Liveness: the server is up if it's accepting TCP connections on the port.
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD ["python", "-c", "import socket,sys; s=socket.socket(); s.settimeout(2); sys.exit(s.connect_ex(('127.0.0.1',8000)))"]
+# Readiness: /health returns 200 only when Quickwit is reachable (else 503).
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+    CMD ["python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/health',timeout=4).status==200 else 1)"]
 
 CMD ["python", "-m", "quickwit_mcp"]
