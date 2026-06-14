@@ -35,3 +35,18 @@ jobs:
       - uses: actions/checkout@v4
       - name: Build image
         run: docker build -t quickwit-mcp:ci .
+
+  helm-chart:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/setup-helm@v4
+      - name: Lint chart
+        run: helm lint charts/quickwit-mcp --set quickwit.baseUrl=http://quickwit:7280
+      - name: Render chart (default + ingress/hpa)
+        run: |
+          helm template qw charts/quickwit-mcp \
+            --set quickwit.baseUrl=http://quickwit:7280 >/dev/null
+          helm template qw charts/quickwit-mcp \
+            --set quickwit.baseUrl=http://quickwit:7280 \
+            --set ingress.enabled=true --set autoscaling.enabled=true >/dev/null
