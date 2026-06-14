@@ -56,11 +56,16 @@ scripts/dev-quickwit.sh down
 
 ### Remote (streamable-http, Docker)
 
+Pull the published image from GHCR (or `docker build -t quickwit-mcp .` to build locally):
+
 ```bash
-docker build -t quickwit-mcp .
-docker run -p 8000:8000 -e QW_BASE_URL=http://<quickwit-host>:7280 quickwit-mcp
+docker run -p 8000:8000 -e QW_BASE_URL=http://<quickwit-host>:7280 \
+  ghcr.io/agarwalvivek29/quickwit-mcp:latest
 # MCP endpoint: http://localhost:8000/mcp
 ```
+
+Images are published to `ghcr.io/agarwalvivek29/quickwit-mcp` (multi-arch: amd64/arm64),
+tagged `latest` and by version (`0.0.1`, `0.0`).
 
 ## Configuration
 
